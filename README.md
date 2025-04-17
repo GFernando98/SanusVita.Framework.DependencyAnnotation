@@ -1,4 +1,9 @@
+# 🧩 SanusVita.Framework.DependencyAnnotation
+
 This package simplifies the implementation of dependency injection. It only requires adding one annotation to classes, avoiding the need to load Program or Startup at the dependency configuration level.
+-----
+
+
 
 ##Configure in Program.cs
 
