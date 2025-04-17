@@ -1,20 +1,71 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This package simplifies the implementation of dependency injection. It only requires adding one annotation to classes, avoiding the need to load Program or Startup at the dependency configuration level.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+##Configure in Program.cs
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+```csharp
+using DependencyAnnotation;
+builder.Services.AddDependencyAnnotation();
+```
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+## Usage
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+1. You must add the annotation to the class with the scope type you require. The annotations are: ScopeService, TransientService, and SingletonService.
+
+```csharp
+global using SanusVita.Framework.DependencyAnnotation.DependencyAnnotation;
+
+[ScopeService]
+public class MyClass : IMyClass
+{
+    
+}
+
+[TransientService]
+public class MyClass
+{
+    
+}
+
+[SingletonService]
+public class MyClass
+{
+    
+}
+```
+
+2. Now you can use your dependencies and call them in the traditional way.
+```csharp
+global using SanusVita.Framework.DependencyAnnotation.DependencyAnnotation;
+
+public class YourController : ControllerBase
+{
+    private readonly MyClass myclass;
+    private readonly IMyClass imyclass;
+    
+    public YourController(MyClass myclass, IMyClass imyclass)
+    {
+        this.myclass = myclass;
+        this.imyclass = imyclass;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] MyCommand command)
+    {
+        var response = await myclass.Create(command);
+        return Ok(response);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] MyCommand command)
+    {
+        var response = await imyclass.Create(command);
+        return Ok(response);
+    }
+}
+```
+
+If you have any suggestions, please feel free to contact me.
+
+gfmendoza.27@outlook.com
+
+or create an issue on GitHu
