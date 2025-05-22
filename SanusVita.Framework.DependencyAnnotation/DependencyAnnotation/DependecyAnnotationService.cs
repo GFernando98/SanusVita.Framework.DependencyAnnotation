@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace SanusVita.Framework.DependencyAnnotation.DependencyAnnotation;
 
@@ -10,7 +11,21 @@ public static class DependecyAnnotationService
 
         foreach (var assembly in assemblies)
         {
-            var typesWithScopeService = assembly.GetTypes()
+            Type[] types;
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types = ex.Types.Where(t => t != null).ToArray()!;
+            }
+            catch
+            {
+                continue;
+            }
+
+            var typesWithScopeService = types
                 .Where(t => t.GetCustomAttributes(typeof(ScopeService), true).Any());
             foreach (var type in typesWithScopeService)
             {
@@ -21,7 +36,7 @@ public static class DependecyAnnotationService
                 else services.AddScoped(type);
             }
 
-            var typesWithSingletonService = assembly.GetTypes()
+            var typesWithSingletonService = types
                 .Where(t => t.GetCustomAttributes(typeof(SingletonService), true).Any());
             foreach (var type in typesWithSingletonService)
             {
@@ -32,7 +47,7 @@ public static class DependecyAnnotationService
                 else services.AddSingleton(type);
             }
 
-            var typesWithTransientService = assembly.GetTypes()
+            var typesWithTransientService = types
                 .Where(t => t.GetCustomAttributes(typeof(TransientService), true).Any());
             foreach (var type in typesWithTransientService)
             {
